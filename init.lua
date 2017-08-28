@@ -28,6 +28,7 @@ minetest.register_chatcommand("ignore", {
 	params = "<name>",
 	description = "Ignore a player",
 	func = function(name, text)
+		if text == name then return end -- do not ignore yourself
 		ignored.add_player(name, text)
 		return true, "Player ignored."
 	end,
@@ -50,7 +51,7 @@ core.register_on_chat_message(function(sender, message)
 	for _,player in ipairs(minetest.get_connected_players()) do
 		local name = player:get_player_name()
 		local players = ignored.get_players(name)
-		if players == 0 then
+		if not players or players == 0 then
 			minetest.chat_send_player(name, "<" .. sender .. "> " .. message)
 			return true
 		else
